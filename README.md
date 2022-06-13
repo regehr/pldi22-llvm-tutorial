@@ -41,7 +41,7 @@ John Regehr, Zhengyang Liu, Nuno P. Lopes
     - OOB memory operations, since these result in corrupted storage
   - immediate UB [inhibits speculation](https://alive2.llvm.org/ce/z/wyArce)
     - IR-level speculation is pretty important, shows up in a lot of places e.g. LICM
-  - this motivated the addition of various forms of "bounded undefined behavior" to LLVM IR
+  - this motivated the addition of various forms of "deferred undefined behavior" to LLVM IR
 
 - undef stands for "any legal value for the type"
 - so an i32 undef can produce any value from 0..2^32-1
@@ -55,11 +55,16 @@ John Regehr, Zhengyang Liu, Nuno P. Lopes
   - basically all optimizing compilers end up with this concept in one form or another
   - working out a coherent set of rules for undef was hard
     - for example, what happens when you branch on undef?
+  - even with a coherent set of rules, compiler devs have a very hard time with undef
 
 - [undef can be transformed into an arbitrary value](https://alive2.llvm.org/ce/z/ZVUpXz)
 - this means that sequential code ends up having many behaviors
 - [undef requires reasoning about arbitrary subsets of values](https://alive2.llvm.org/ce/z/DYNQiv)
 - powerset behavior leads to extraordinarily difficult solver queries
+- [each SSA use of undef might yield a different value](https://alive2.llvm.org/ce/z/GLtJgB)
+  - an optimization can reduce the number of uses of a value that might be undef
+  - an optimization can keep the number of uses of a maybe-undef value the same
+  - an optimization can almost never increase the number of uses of a maybe-undef value
 
 - now we're ready to introduce refinement!
 - a transformation is a refinement if, forall program configurations, the transformed code has a subset of the original code's behaviors
@@ -70,15 +75,22 @@ John Regehr, Zhengyang Liu, Nuno P. Lopes
   solver's quantifier elimination parts
 - Z3 still needs a lot of work here, until this happens we get timeouts on some apparently very simple queries
 
-  why is poison needed?
-    examples from paper
+- we've seen undef and immediate undefined behavior
+- these two concepts ended up being insufficient to justify all of the
+  optimizations that the LLVM developers wanted to write, so one more
+  kind of undefined behavior was added
+- in C and C++, a + b > a and b > 0 always have the same result, because signed overflow is undefined
+- [the analogous optimization in LLVM didn't work](https://alive2.llvm.org/ce/z/wPtEnP)
+  - this can't be fixed by making signed overflow return undef
+  - it can be fixed by immediate UB on signed overflow, but that creates too many other problems
+- solution is a "poison" value that is outside the normal space of values
+- for most operations, "op x, poison" [evaluates to poison](https://alive2.llvm.org/ce/z/8NFkSZ)
+- this solves this problem, but poison and undef are a persistent source of problems for compiler developers, who have an easy time forgetting about one or the other of them
+- [poison refines to undef but not the other way around](https://alive2.llvm.org/ce/z/3-S3NT)
+
   drop UB flags
   poison -> undef
   undef -> constant
-  2*x ->XX x+x
-  undef implies arbitrary subsets
-    even/odd examples
-  2^2^width undef values, yikes  
   freeze
 
 ## Memory
