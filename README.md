@@ -29,11 +29,19 @@ John Regehr, Zhengyang Liu, Nuno P. Lopes
 
 ## Undefined Behavior and Refinement
 
-- several kinds of UB in LLVM, it's kind of complicated
-
 - undefined behavior is awful in user-facing languages
 - however, in an IR it is a useful tool for exposing optimization opportunities
 - IR-level UB has little to do with the source language!
+- several kinds of UB in LLVM, it's kind of complicated
+
+- "immediate UB" in LLVM is the same as in C and C++
+  - program loses all meaning when you perform this sort of operation
+  - it is reserved for things with serious consequences
+    - divide by zero, since it traps on many architectures
+    - OOB memory operations, since these result in corrupted storage
+  - immediate UB [inhibits speculation](https://alive2.llvm.org/ce/z/wyArce)
+    - IR-level speculation is pretty important, shows up in a lot of places e.g. LICM
+  - this motivated the addition of various forms of "bounded undefined behavior" to LLVM IR
 
 - undef stands for "any legal value for the type"
 - so an i32 undef can produce any value from 0..2^32-1
@@ -45,15 +53,10 @@ John Regehr, Zhengyang Liu, Nuno P. Lopes
   - there's still a cost, but it's in terms of increasing the complexity of reasoning
     about the compiler!
   - basically all optimizing compilers end up with this concept in one form or another
-  - 
 
-- "immediate UB" in LLVM is the same as in C and C++
-  - program loses all meaning when you perform this sort of operation
-  - it is reserved for things with serious consequences
-    - divide by zero, since it traps on many architectures
-    - OOB memory operations, since these result in corrupted storage
-  - immediate UB [inhibits speculation](https://alive2.llvm.org/ce/z/wyArce)
-    - IR-level speculation is pretty important, shows up in a lot of places e.g. LICM
+- [undef can be transformed into an arbitrary value](https://alive2.llvm.org/ce/z/ZVUpXz)
+- this means that sequential code ends up having many behaviors
+
 
   why is poison needed?
     examples from paper
