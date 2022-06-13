@@ -88,10 +88,11 @@ John Regehr, Zhengyang Liu, Nuno P. Lopes
 - this solves this problem, but poison and undef are a persistent source of problems for compiler developers, who have an easy time forgetting about one or the other of them
 - [poison refines to undef but not the other way around](https://alive2.llvm.org/ce/z/3-S3NT)
 
-  drop UB flags
-  poison -> undef
-  undef -> constant
-  freeze
+- we proposed a "freeze" instruction that basically makes both undef and poison pick a stable value
+- we got the LLVM community to accept it
+- we implemented it (this was mainly Juneyoung Lee's work)
+- we're trying to get rid of undef entirely, but this is a long and difficult project
+  - many real-world engineering constraints due to LLVM's wide adoption
 
 ## Memory
 
