@@ -103,9 +103,20 @@ John Regehr, Zhengyang Liu, Nuno P. Lopes
 
 - [list of bugs](https://github.com/AliveToolkit/alive2/blob/master/BugList.md)
 
-## Translation Validation for a Backend
+## Translation Validation for the AArch64 backend
 
-- [blog post with list of bugs](https://blog.regehr.org/archives/2265)
+- [blog post](https://blog.regehr.org/archives/2265)
+
+## A Current Project: Continuous Fuzzing for LLVM
+
+- [we wrote a mutation engine for LLVM IR](https://blog.regehr.org/archives/2148)
+- we want to take a strong machine and have it...
+  - build a new LLVM each day
+  - spend the rest of the day performing mutation-based fuzzing
+  - test the middle-end optimizer and also some backends
+  - I wrote a cache to avoid redundant queries
+  - we'll reduce bug triggers using llvm-reduce
+- the current roadblock is triaging the outputs of this process  
 
 # Minotaur: A superoptimizer focusing on vectorized x86-64 code
 
