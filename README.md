@@ -28,7 +28,7 @@ John Regehr, Zhengyang Liu, Nuno P. Lopes
 - [simple example with overflow disallowed](https://alive2.llvm.org/ce/z/qhL7v9)
 - [running specific opt passes](https://alive2.llvm.org/ce/z/4H2oo5)
 - exercise: [udiv -> sdiv](https://alive2.llvm.org/ce/z/IsgIcg) and [answer](https://alive2.llvm.org/ce/z/LS6Hty)
-- [changing control flow]()
+- changing control flow [1](https://alive2.llvm.org/ce/z/EZs-NN) and [2](https://alive2.llvm.org/ce/z/bN8iK5)
 - unrolling loops [C to LLVM](https://gcc.godbolt.org/z/573Mr3d7e) and [verifying the LLVM](https://alive2.llvm.org/ce/z/4QTCQ_)
 
 ## Undefined Behavior and Refinement
