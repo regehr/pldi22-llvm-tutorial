@@ -5,6 +5,10 @@ John Regehr, Zhengyang Liu, Nuno P. Lopes
 ## Introduction
 
 - What are we trying to do here?
+  - several projects in different stages
+  - making Alive2 as complete and definitive as possible
+  - making the LLVM implementation as formally grounded as possible [example of ongoing discussion](https://github.com/llvm/llvm-project/issues/49839)
+  - making it unnecessary to create optimizers by hand
 - Nuno's role, John's role, Zhengyang's role
 - parts of this talk
 
