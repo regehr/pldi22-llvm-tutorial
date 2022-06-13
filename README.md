@@ -53,10 +53,22 @@ John Regehr, Zhengyang Liu, Nuno P. Lopes
   - there's still a cost, but it's in terms of increasing the complexity of reasoning
     about the compiler!
   - basically all optimizing compilers end up with this concept in one form or another
+  - working out a coherent set of rules for undef was hard
+    - for example, what happens when you branch on undef?
 
 - [undef can be transformed into an arbitrary value](https://alive2.llvm.org/ce/z/ZVUpXz)
 - this means that sequential code ends up having many behaviors
+- [undef requires reasoning about arbitrary subsets of values](https://alive2.llvm.org/ce/z/DYNQiv)
+- powerset behavior leads to extraordinarily difficult solver queries
 
+- now we're ready to introduce refinement!
+- a transformation is a refinement if, forall program configurations, the transformed code has a subset of the original code's behaviors
+- when it's a proper subset we call it a non-trivial refinement
+- non-trivial refinement is ubiquitous, we have to deal with it
+- checking refinement is the primary function of Alive2
+- refinement checks in the presence of undef put some stress on the
+  solver's quantifier elimination parts
+- Z3 still needs a lot of work here, until this happens we get timeouts on some apparently very simple queries
 
   why is poison needed?
     examples from paper
@@ -71,7 +83,8 @@ John Regehr, Zhengyang Liu, Nuno P. Lopes
 
 ## Memory
 
-- [C to LLVM](https://gcc.godbolt.org/z/ooP5jEao3) and [LLVM to LLVM](https://alive2.llvm.org/ce/z/emHFcp) and [better LLVM to LLVM](https://alive2.llvm.org/ce/z/9jEVvb)
+- not going into details about this since it's pretty difficult stuff and most of the work was done outside of my group, but we had a PLDI paper a few years ago and Nuno + Juneyoung [have a newer one at CAV '21](https://web.ist.utl.pt/nuno.lopes/pubs.php?id=alive2-mem-cav21)
+- but it pretty much just works [C to LLVM](https://gcc.godbolt.org/z/ooP5jEao3) and [LLVM to LLVM](https://alive2.llvm.org/ce/z/emHFcp) and [better LLVM to LLVM](https://alive2.llvm.org/ce/z/9jEVvb)
 
 ## Some Bugs
 
